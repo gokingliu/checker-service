@@ -1,8 +1,8 @@
-module trpc.app.Greeter
+module trpc.app.Check
 
 go 1.12
 
-replace git.code.oa.com/trpcprotocol/test/helloworld => ./stub/git.code.oa.com/trpcprotocol/test/helloworld
+replace git.woa.com/crotaliu/pb-hub => ./stub/git.woa.com/crotaliu/pb-hub
 
 require (
 	git.code.oa.com/tpstelemetry/tps-sdk-go/instrumentation/trpctelemetry v0.4.19
@@ -14,6 +14,6 @@ require (
 	git.code.oa.com/trpc-go/trpc-metrics-m007 v0.5.1
 	git.code.oa.com/trpc-go/trpc-metrics-runtime v0.3.3
 	git.code.oa.com/trpc-go/trpc-naming-polaris v0.3.4
-	git.code.oa.com/trpcprotocol/test/helloworld v0.0.0-00010101000000-000000000000
+	git.woa.com/crotaliu/pb-hub v0.0.0-00010101000000-000000000000
 	github.com/golang/mock v1.6.0
 )

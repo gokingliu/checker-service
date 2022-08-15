@@ -3,8 +3,8 @@ global:                             #全局配置
   env_name: test                    #环境名称，非正式环境下多环境的名称
 
 server:                                            #服务端配置
-  app: test                                        #业务的应用名
-  server: helloworld                             #进程服务名
+  app: checker                                        #业务的应用名
+  server: checkHealth                             #进程服务名
   bin_path: /usr/local/trpc/bin/                   #二进制可执行文件和框架配置文件所在路径
   conf_path: /usr/local/trpc/conf/                 #业务配置文件所在路径
   data_path: /usr/local/trpc/data/                 #业务数据文件所在路径
@@ -12,7 +12,7 @@ server:                                            #服务端配置
     - simpledebuglog
     - recovery                                     #拦截框架创建的业务处理协程panic
   service:                                         #业务服务提供的service，可以有多个
-    - name: trpc.test.helloworld.Greeter      #service的路由名称
+    - name: trpc.checker.checkHealth.Check      #service的路由名称
       ip: 127.0.0.1                            #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
       #nic: eth0
       port: 8000                #服务监听端口 可使用占位符 ${port}
@@ -26,7 +26,7 @@ client:                                            #客户端调用的后端配�
   namespace: Development                           #针对所有后端的环境
   filter:                                          #针对所有后端调用函数前后的拦截器列表
   service:                                         #针对单个后端的配置
-    - name: trpc.test.helloworld.Greeter      #后端服务的service name
+    - name: trpc.checker.checkHealth.Check      #后端服务的service name
       namespace: Development                   #后端服务的环境
       network: tcp                             #后端服务的网络类型 tcp udp 配置优先
       protocol: http               #应用层协议 trpc http

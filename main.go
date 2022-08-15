@@ -12,12 +12,12 @@ import (
 	_ "git.code.oa.com/trpc-go/trpc-metrics-runtime"
 	_ "git.code.oa.com/trpc-go/trpc-naming-polaris"
 
-	pb "git.code.oa.com/trpcprotocol/test/helloworld"
+	pb "git.woa.com/crotaliu/pb-hub"
 )
 
 func main() {
 	s := trpc.NewServer()
-	pb.RegisterGreeterService(s, &greeterImpl{})
+	pb.RegisterCheckService(s, &checkImpl{})
 	if err := s.Serve(); err != nil {
 		log.Fatal(err)
 	}

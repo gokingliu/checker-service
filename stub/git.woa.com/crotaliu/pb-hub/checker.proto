@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package trpc.checker.checkHealth;
+
+option go_package="git.woa.com/crotaliu/pb-hub";
+
+/* 注册服务 */
+service Check {
+  // 检查存活
+  rpc Health (HealthRequest) returns (HealthReply) {}
+}
+
+/* 请求参数 */
+// 检查存活 请求参数
+message HealthRequest {
+  uint32 type = 1; // nil-检查线程和文件 1-检查线程 2-检查文件
+}
+
+/* 响应参数 */
+// 检查存活 响应参数
+message HealthReply {
+  bool isAlive = 1;
+}
+
