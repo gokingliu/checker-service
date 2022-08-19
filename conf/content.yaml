@@ -1,0 +1,7 @@
+content:
+  files:
+  - "/data/file1"
+  - "/data/file2"
+  process:
+  - "yy1"
+  - "yy2"

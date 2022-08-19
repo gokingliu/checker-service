@@ -1,9 +1,10 @@
-package main
+package tests
 
 import (
 	"context"
 	"reflect"
 	"testing"
+	"trpc.app.Check"
 
 	_ "git.code.oa.com/trpc-go/trpc-go/http"
 
@@ -25,7 +26,7 @@ func Test_checkImpl_Health(t *testing.T) {
 	// 预期行为
 	m := checkService.EXPECT().Health(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
 	m.DoAndReturn(func(ctx context.Context, req *pb.HealthRequest, rsp *pb.HealthReply) error {
-		s := &checkImpl{}
+		s := &main.checkImpl{}
 		return s.Health(ctx, req, rsp)
 	})
 	gomock.InOrder(inorderClient...)

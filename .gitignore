@@ -1,0 +1,30 @@
+# Logs
+log
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
+
+# Output files
+*.tgz
+movie_opration
+
+# Editor directories and files
+.idea
+.vscode
+.husky
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Operating system files
+.DS_Store

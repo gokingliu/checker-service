@@ -1,4 +1,4 @@
-module trpc.app.Check
+module checker
 
 go 1.12
 
