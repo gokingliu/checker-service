@@ -13,12 +13,14 @@ service Check {
 /* 请求参数 */
 // 检查存活 请求参数
 message HealthRequest {
-  uint32 type = 1; // 0-检查线程和文件 1-检查线程 2-检查文件
+  uint32 type   = 1; // 0-检查线程和文件 1-检查线程 2-检查文件
 }
 
 /* 响应参数 */
 // 检查存活 响应参数
 message HealthReply {
-  bool isAlive = 1;
+  int32  code   = 1; // 返回码
+  string msg    = 2; // 返回信息
+  bool   result = 3; // 返回结果，false-登录失败 true-登录成功
 }
 
