@@ -22,6 +22,9 @@ type CheckService interface {
 
 	// Health 检查存活
 	Health(ctx context.Context, req *HealthRequest, rsp *HealthReply) (err error)
+
+	// GetHealth 调用探活接口
+	GetHealth(ctx context.Context, req *HealthRequest, rsp *HealthReply) (err error)
 }
 
 func CheckService_Health_Handler(svr interface{}, ctx context.Context, f server.FilterFunc) (interface{}, error) {
@@ -44,6 +47,26 @@ func CheckService_Health_Handler(svr interface{}, ctx context.Context, f server.
 	return rsp, nil
 }
 
+func CheckService_GetHealth_Handler(svr interface{}, ctx context.Context, f server.FilterFunc) (interface{}, error) {
+
+	req := &HealthRequest{}
+	filters, err := f(req)
+	if err != nil {
+		return nil, err
+	}
+	handleFunc := func(ctx context.Context, reqbody interface{}, rspbody interface{}) error {
+		return svr.(CheckService).GetHealth(ctx, reqbody.(*HealthRequest), rspbody.(*HealthReply))
+	}
+
+	rsp := &HealthReply{}
+	err = filters.Handle(ctx, req, rsp, handleFunc)
+	if err != nil {
+		return nil, err
+	}
+
+	return rsp, nil
+}
+
 // CheckServer_ServiceDesc descriptor for server.RegisterService
 var CheckServer_ServiceDesc = server.ServiceDesc{
 	ServiceName: "trpc.checker.checkHealth.Check",
@@ -52,6 +75,10 @@ var CheckServer_ServiceDesc = server.ServiceDesc{
 		{
 			Name: "/trpc.checker.checkHealth.Check/Health",
 			Func: CheckService_Health_Handler,
+		},
+		{
+			Name: "/trpc.checker.checkHealth.Check/GetHealth",
+			Func: CheckService_GetHealth_Handler,
 		},
 	},
 }
@@ -71,6 +98,9 @@ type CheckClientProxy interface {
 
 	// Health 检查存活
 	Health(ctx context.Context, req *HealthRequest, opts ...client.Option) (rsp *HealthReply, err error)
+
+	// GetHealth 调用探活接口
+	GetHealth(ctx context.Context, req *HealthRequest, opts ...client.Option) (rsp *HealthReply, err error)
 }
 
 type CheckClientProxyImpl struct {
@@ -93,6 +123,32 @@ func (c *CheckClientProxyImpl) Health(ctx context.Context, req *HealthRequest, o
 	msg.WithCalleeServer("checkHealth")
 	msg.WithCalleeService("Check")
 	msg.WithCalleeMethod("Health")
+	msg.WithSerializationType(codec.SerializationTypePB)
+
+	callopts := make([]client.Option, 0, len(c.opts)+len(opts))
+	callopts = append(callopts, c.opts...)
+	callopts = append(callopts, opts...)
+
+	rsp := &HealthReply{}
+
+	if err := c.client.Invoke(ctx, req, rsp, callopts...); err != nil {
+		return nil, err
+	}
+
+	return rsp, nil
+}
+
+func (c *CheckClientProxyImpl) GetHealth(ctx context.Context, req *HealthRequest, opts ...client.Option) (*HealthReply, error) {
+
+	ctx, msg := codec.WithCloneMessage(ctx)
+	defer codec.PutBackMessage(msg)
+
+	msg.WithClientRPCName("/trpc.checker.checkHealth.Check/GetHealth")
+	msg.WithCalleeServiceName(CheckServer_ServiceDesc.ServiceName)
+	msg.WithCalleeApp("checker")
+	msg.WithCalleeServer("checkHealth")
+	msg.WithCalleeService("Check")
+	msg.WithCalleeMethod("GetHealth")
 	msg.WithSerializationType(codec.SerializationTypePB)
 
 	callopts := make([]client.Option, 0, len(c.opts)+len(opts))

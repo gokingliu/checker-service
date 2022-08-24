@@ -5,6 +5,7 @@ import (
 	"checker/logic"
 	"context"
 	pb "git.woa.com/crotaliu/pb-hub"
+	"strings"
 )
 
 type CheckImpl struct{}
@@ -14,7 +15,7 @@ func (s *CheckImpl) Health(ctx context.Context, req *pb.HealthRequest, rsp *pb.H
 	// 检查进程和文件
 	if req.Type == 1 {
 		// 检查进程
-		processResult, processFailStr, processErr := logic.GetHealthLogic("process")
+		processResult, processFailStr, processErr := logic.HealthLogic("process")
 		// 读取或解析 yaml 错误
 		if processErr != nil {
 			rsp.Code, rsp.Msg = configs.InnerUnmarshalYamlError.Code, configs.InnerUnmarshalYamlError.Msg
@@ -23,17 +24,16 @@ func (s *CheckImpl) Health(ctx context.Context, req *pb.HealthRequest, rsp *pb.H
 		}
 		// 返回检查结果
 		if processFailStr != "" {
-			rsp.Msg = processFailStr
+			rsp.Code, rsp.Msg = configs.ResFail.Code, processFailStr
 		} else {
-			rsp.Msg = configs.ResOk.Msg
+			rsp.Code, rsp.Msg = configs.ResOk.Code, configs.ResOk.Msg
 		}
-		rsp.Code = configs.ResOk.Code
 		rsp.Result = processResult
 
 		return nil
 	} else if req.Type == 2 {
 		// 检查文件
-		filesResult, filesFailStr, filesErr := logic.GetHealthLogic("files")
+		filesResult, filesFailStr, filesErr := logic.HealthLogic("files")
 		// 读取或解析 yaml 错误
 		if filesErr != nil {
 			rsp.Code, rsp.Msg = configs.InnerUnmarshalYamlError.Code, configs.InnerUnmarshalYamlError.Msg
@@ -42,19 +42,18 @@ func (s *CheckImpl) Health(ctx context.Context, req *pb.HealthRequest, rsp *pb.H
 		}
 		// 返回检查结果
 		if filesFailStr != "" {
-			rsp.Msg = filesFailStr
+			rsp.Code, rsp.Msg = configs.ResFail.Code, filesFailStr
 		} else {
-			rsp.Msg = configs.ResOk.Msg
+			rsp.Code, rsp.Msg = configs.ResOk.Code, configs.ResOk.Msg
 		}
-		rsp.Code = configs.ResOk.Code
 		rsp.Result = filesResult
 
 		return nil
 	} else {
 		// 检查进程
-		processResult, processFailStr, processErr := logic.GetHealthLogic("process")
+		processResult, processFailStr, processErr := logic.HealthLogic("process")
 		// 检查文件
-		filesResult, filesFailStr, filesErr := logic.GetHealthLogic("files")
+		filesResult, filesFailStr, filesErr := logic.HealthLogic("files")
 		// 读取或解析 yaml 错误
 		if processErr != nil || filesErr != nil {
 			rsp.Code, rsp.Msg = configs.InnerUnmarshalYamlError.Code, configs.InnerUnmarshalYamlError.Msg
@@ -63,13 +62,37 @@ func (s *CheckImpl) Health(ctx context.Context, req *pb.HealthRequest, rsp *pb.H
 		}
 		// 返回检查结果
 		if processFailStr != "" || filesFailStr != "" {
-			rsp.Msg = processFailStr + filesFailStr
+			rsp.Code = configs.ResFail.Code
+			if processFailStr != "" && filesFailStr != "" {
+				rsp.Msg = processFailStr + "\n" + filesFailStr
+			} else {
+				rsp.Msg = processFailStr + filesFailStr
+			}
 		} else {
-			rsp.Msg = configs.ResOk.Msg
+			rsp.Code, rsp.Msg = configs.ResOk.Code, configs.ResOk.Msg
 		}
-		rsp.Code = configs.ResOk.Code
 		rsp.Result = processResult && filesResult
 
 		return nil
 	}
+}
+
+func (s *CheckImpl) GetHealth(ctx context.Context, req *pb.HealthRequest, rsp *pb.HealthReply) error {
+	msgErr, err := logic.GetHealthLogic(req.Type)
+	// 解析出错
+	if err != nil {
+		rsp.Code, rsp.Msg = configs.InnerUnmarshalYamlError.Code, configs.InnerUnmarshalYamlError.Msg
+		rsp.Result = false
+		return nil
+	}
+	// 机器出错信息
+	if len(msgErr) > 0 {
+		rsp.Code, rsp.Msg = configs.ResFail.Code, strings.Join(msgErr, "\n")
+		rsp.Result = false
+		return nil
+	}
+	rsp.Code, rsp.Msg = configs.ResOk.Code, configs.ResOk.Msg
+	rsp.Result = true
+
+	return nil
 }

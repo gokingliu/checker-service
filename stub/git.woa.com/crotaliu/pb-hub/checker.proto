@@ -8,6 +8,8 @@ option go_package="git.woa.com/crotaliu/pb-hub";
 service Check {
   // 检查存活
   rpc Health (HealthRequest) returns (HealthReply) {}
+  // 调用探活接口
+  rpc GetHealth (HealthRequest) returns (HealthReply) {}
 }
 
 /* 请求参数 */

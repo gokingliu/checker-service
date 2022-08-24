@@ -14,7 +14,7 @@ build/Release
 
 # Output files
 *.tgz
-movie_opration
+checker
 
 # Editor directories and files
 .idea

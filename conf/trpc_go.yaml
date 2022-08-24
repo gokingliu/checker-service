@@ -19,6 +19,30 @@ server:                                           #服务端配置
       protocol: http                              #应用层协议 trpc http
       timeout: 1000                               #请求最长处理时间 单位 毫秒
 
+client:                                           #客户端调用的后端配置
+  timeout: 10000                                  #针对所有后端的请求最长处理时间
+  namespace: Development                          #针对所有后端的环境
+  filter:                                         #针对所有后端调用函数前后的拦截器列表
+  service:                                        #针对单个后端的配置
+    - name: trpc.checker.stdhttp.Health1          #获取其他机器探活信息
+      namespace: Development                      #后端服务的环境
+      network: tcp                                #后端服务的网络类型 tcp udp 配置优先
+      protocol: http                              #应用层协议 trpc http
+      target: ip://127.0.0.1:8000                 #请求服务地址
+      timeout: 10000                              #请求最长处理时间
+    - name: trpc.checker.stdhttp.Health2          #获取其他机器探活信息
+      namespace: Development                      #后端服务的环境
+      network: tcp                                #后端服务的网络类型 tcp udp 配置优先
+      protocol: http                              #应用层协议 trpc http
+      target: ip://127.0.0.1:8000                 #请求服务地址
+      timeout: 10000                              #请求最长处理时间
+    - name: trpc.checker.stdhttp.Health3          #获取其他机器探活信息
+      namespace: Development                      #后端服务的环境
+      network: tcp                                #后端服务的网络类型 tcp udp 配置优先
+      protocol: http                              #应用层协议 trpc http
+      target: ip://127.0.0.1:8000                 #请求服务地址
+      timeout: 10000                              #请求最长处理时间
+
 plugins:                                          #插件配置
   log:                                            #日志配置
     default:                                      #默认日志的配置，可支持多输出

@@ -1,10 +1,10 @@
 package tests
 
 import (
+	"checker"
 	"context"
 	"reflect"
 	"testing"
-	"trpc.app.Check"
 
 	_ "git.code.oa.com/trpc-go/trpc-go/http"
 

@@ -9,10 +9,12 @@ type Status struct {
 }
 
 var (
-	ResOk                   = Status{0, "Success"}
-	InnerLoadYamlError      = Status{-100, "内部读取Yaml失败"}
-	InnerUnmarshalYamlError = Status{-101, "内部解析Yaml失败"}
-	ClientParamParsingError = Status{100, "客户端请求参数解析失败"}
+	ResOk                        = Status{0, "Success"}
+	ResFail                      = Status{-1, ""}
+	InnerLoadYamlError           = Status{-100, "内部读取Yaml失败"}
+	InnerUnmarshalYamlError      = Status{-101, "内部解析Yaml失败"}
+	ClientPostParamsRequestError = Status{100, "The params of POST method only support map[string]interface{} type!"}
+	ClientGetQueryRequestError   = Status{101, "The params of GET method only support string type!"}
 )
 
 // New 错误构造方法
