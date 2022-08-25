@@ -20,11 +20,34 @@ import (
 // CheckService defines service
 type CheckService interface {
 
-	// Health 检查存活
+	// Check 检查脚本存活
+	Check(ctx context.Context, req *HealthRequest, rsp *HealthReply) (err error)
+
+	// Health 检查进程和文件存活
 	Health(ctx context.Context, req *HealthRequest, rsp *HealthReply) (err error)
 
 	// GetHealth 调用探活接口
 	GetHealth(ctx context.Context, req *HealthRequest, rsp *HealthReply) (err error)
+}
+
+func CheckService_Check_Handler(svr interface{}, ctx context.Context, f server.FilterFunc) (interface{}, error) {
+
+	req := &HealthRequest{}
+	filters, err := f(req)
+	if err != nil {
+		return nil, err
+	}
+	handleFunc := func(ctx context.Context, reqbody interface{}, rspbody interface{}) error {
+		return svr.(CheckService).Check(ctx, reqbody.(*HealthRequest), rspbody.(*HealthReply))
+	}
+
+	rsp := &HealthReply{}
+	err = filters.Handle(ctx, req, rsp, handleFunc)
+	if err != nil {
+		return nil, err
+	}
+
+	return rsp, nil
 }
 
 func CheckService_Health_Handler(svr interface{}, ctx context.Context, f server.FilterFunc) (interface{}, error) {
@@ -73,6 +96,10 @@ var CheckServer_ServiceDesc = server.ServiceDesc{
 	HandlerType: ((*CheckService)(nil)),
 	Methods: []server.Method{
 		{
+			Name: "/trpc.checker.checkHealth.Check/Check",
+			Func: CheckService_Check_Handler,
+		},
+		{
 			Name: "/trpc.checker.checkHealth.Check/Health",
 			Func: CheckService_Health_Handler,
 		},
@@ -96,7 +123,10 @@ func RegisterCheckService(s server.Service, svr CheckService) {
 // CheckClientProxy defines service client proxy
 type CheckClientProxy interface {
 
-	// Health 检查存活
+	// Check 检查脚本存活
+	Check(ctx context.Context, req *HealthRequest, opts ...client.Option) (rsp *HealthReply, err error)
+
+	// Health 检查进程和文件存活
 	Health(ctx context.Context, req *HealthRequest, opts ...client.Option) (rsp *HealthReply, err error)
 
 	// GetHealth 调用探活接口
@@ -110,6 +140,32 @@ type CheckClientProxyImpl struct {
 
 var NewCheckClientProxy = func(opts ...client.Option) CheckClientProxy {
 	return &CheckClientProxyImpl{client: client.DefaultClient, opts: opts}
+}
+
+func (c *CheckClientProxyImpl) Check(ctx context.Context, req *HealthRequest, opts ...client.Option) (*HealthReply, error) {
+
+	ctx, msg := codec.WithCloneMessage(ctx)
+	defer codec.PutBackMessage(msg)
+
+	msg.WithClientRPCName("/trpc.checker.checkHealth.Check/Check")
+	msg.WithCalleeServiceName(CheckServer_ServiceDesc.ServiceName)
+	msg.WithCalleeApp("checker")
+	msg.WithCalleeServer("checkHealth")
+	msg.WithCalleeService("Check")
+	msg.WithCalleeMethod("Check")
+	msg.WithSerializationType(codec.SerializationTypePB)
+
+	callopts := make([]client.Option, 0, len(c.opts)+len(opts))
+	callopts = append(callopts, c.opts...)
+	callopts = append(callopts, opts...)
+
+	rsp := &HealthReply{}
+
+	if err := c.client.Invoke(ctx, req, rsp, callopts...); err != nil {
+		return nil, err
+	}
+
+	return rsp, nil
 }
 
 func (c *CheckClientProxyImpl) Health(ctx context.Context, req *HealthRequest, opts ...client.Option) (*HealthReply, error) {

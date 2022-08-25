@@ -6,7 +6,9 @@ option go_package="git.woa.com/crotaliu/pb-hub";
 
 /* 注册服务 */
 service Check {
-  // 检查存活
+  // 检查脚本存活
+  rpc Check (HealthRequest) returns (HealthReply) {}
+  // 检查进程和文件存活
   rpc Health (HealthRequest) returns (HealthReply) {}
   // 调用探活接口
   rpc GetHealth (HealthRequest) returns (HealthReply) {}

@@ -34,6 +34,20 @@ func (m *MockCheckService) EXPECT() *MockCheckServiceMockRecorder {
 	return m.recorder
 }
 
+// Check mocks base method
+func (m *MockCheckService) Check(ctx context.Context, req *HealthRequest, rsp *HealthReply) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Check", ctx, req, rsp)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Check indicates an expected call of Check
+func (mr *MockCheckServiceMockRecorder) Check(ctx, req, rsp interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Check", reflect.TypeOf((*MockCheckService)(nil).Check), ctx, req, rsp)
+}
+
 // Health mocks base method
 func (m *MockCheckService) Health(ctx context.Context, req *HealthRequest, rsp *HealthReply) error {
 	m.ctrl.T.Helper()
@@ -83,6 +97,26 @@ func NewMockCheckClientProxy(ctrl *gomock.Controller) *MockCheckClientProxy {
 // EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockCheckClientProxy) EXPECT() *MockCheckClientProxyMockRecorder {
 	return m.recorder
+}
+
+// Check mocks base method
+func (m *MockCheckClientProxy) Check(ctx context.Context, req *HealthRequest, opts ...client.Option) (*HealthReply, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, req}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Check", varargs...)
+	ret0, _ := ret[0].(*HealthReply)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Check indicates an expected call of Check
+func (mr *MockCheckClientProxyMockRecorder) Check(ctx, req interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, req}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Check", reflect.TypeOf((*MockCheckClientProxy)(nil).Check), varargs...)
 }
 
 // Health mocks base method

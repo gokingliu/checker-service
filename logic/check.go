@@ -6,7 +6,57 @@ import (
 	"checker/utils"
 	"strings"
 	"sync"
+	"time"
 )
+
+// CheckLogic 获取脚本是否存在，返回检查结果、不存在的脚本、错误信息
+func CheckLogic(key string) (bool, string, error) {
+	// 读取 yaml 配置
+	yamlContent, err := utils.LoadYaml("conf/content.yaml")
+	// 读取 yaml 具体内容
+	yamlList, ok := yamlContent["content"].(map[string]interface{})[key].([]interface{})
+	if err != nil || !ok {
+		return false, "", configs.New(configs.InnerUnmarshalYamlError)
+	}
+	// 定义变量
+	flag := true
+	list := make([]string, 0)
+	// 遍历脚本是否存在
+	for i := 0; i < len(yamlList); i++ {
+		yamlItem, okItem := yamlList[i].(map[string]interface{})
+		itemName, okName := yamlItem["name"].(string)
+		itemFile, okFile := yamlItem["file"].(string)
+		if !okItem || !okName || !okFile {
+			return false, "", configs.New(configs.InnerUnmarshalYamlError)
+		}
+		// 脚本进程不存在
+		if !utils.CheckProcessExists(itemName) {
+			// 进程不存在时校验日志更新时间
+			fileUpdateTime := utils.CheckPathUpdateTime(itemFile)
+			// 获取距离上次更新消耗的时间
+			consumeTime := time.Now().Unix() - fileUpdateTime
+			// sys_wx_keyword 5 分钟执行一次，其他 10 分钟执行一次
+			if itemName == "sys_wx_keyword" {
+				if consumeTime > 5*60 {
+					flag = false
+					list = append(list, itemName)
+				}
+			} else {
+				if consumeTime > 10*60 {
+					flag = false
+					list = append(list, itemName)
+				}
+			}
+		}
+	}
+	// 脚本任务不存在并且日志更新时间大于定时任务时间
+	str := ""
+	if list != nil && len(list) > 0 {
+		str = "脚本异常: " + strings.Join(list, "|")
+	}
+
+	return flag, str, nil
+}
 
 // HealthLogic 获取进程/文件是否存在，返回检查结果、不存在进程/文件、错误信息
 func HealthLogic(key string) (bool, string, error) {
@@ -42,12 +92,10 @@ func HealthLogic(key string) (bool, string, error) {
 	str := ""
 	if list != nil && len(list) > 0 {
 		str = strings.Join(list, "")
-		if str != "" {
-			if key == "process" {
-				str = "缺失的进程: " + str
-			} else {
-				str = "缺失的文件: " + str
-			}
+		if key == "process" {
+			str = "缺失的进程: " + str
+		} else {
+			str = "缺失的文件: " + str
 		}
 	}
 

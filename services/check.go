@@ -10,7 +10,28 @@ import (
 
 type CheckImpl struct{}
 
-// Health 检查存活
+// Check 检查脚本存活
+func (s *CheckImpl) Check(ctx context.Context, req *pb.HealthRequest, rsp *pb.HealthReply) error {
+	// 检查脚本
+	scriptsResult, scriptsFailStr, scriptsErr := logic.CheckLogic("scripts")
+	// 读取或解析 yaml 错误
+	if scriptsErr != nil {
+		rsp.Code, rsp.Msg = configs.InnerUnmarshalYamlError.Code, configs.InnerUnmarshalYamlError.Msg
+		rsp.Result = false
+		return nil
+	}
+	// 返回检查结果
+	if scriptsFailStr != "" {
+		rsp.Code, rsp.Msg = configs.ResFail.Code, scriptsFailStr
+	} else {
+		rsp.Code, rsp.Msg = configs.ResOk.Code, configs.ResOk.Msg
+	}
+	rsp.Result = scriptsResult
+
+	return nil
+}
+
+// Health 检查进程和文件存活
 func (s *CheckImpl) Health(ctx context.Context, req *pb.HealthRequest, rsp *pb.HealthReply) error {
 	// 检查进程和文件
 	if req.Type == 1 {

@@ -1,7 +1,32 @@
 content:
   files:
-  - "/data/file1"
-  - "/data/file2"
+  - /home/oicq/sys_wx_keyword/log/sys_wx_keyword.log
+  - /home/oicq/sys_wx_keyword_nickname/log/sys_wx_keyword.log
+  - /home/oicq/sys_ieg_keyword/sys_ieg_keyword.log
+  - /home/oicq/sys_ieg_keyword_nickname/sys_ieg_keyword_nickname.log
+  - /home/oicq/sys_qqmail_wxctockeyword/sys_qqmail_wxctockeyword.log
+  - /home/oicq/sys_qqmail_wxgroupkeyword/sys_qqmail_wxgroupkeyword.log
+  - /home/oicq/sys_qqmail_real_nickname/sys_qqmail_real_nickname.log
   process:
-  - "yy1"
-  - "yy2"
+  - sys_wx_keyword
+  - sys_wx_keyword_nickname
+  - sys_ieg_keyword
+  - sys_ieg_keyword_nickname
+  - sys_qqmail_wxctockeyword
+  - sys_qqmail_wxgroupkeyword
+  - sys_qqmail_real_nickname
+  scripts:
+    - name: sys_wx_keyword
+      file: /home/oicq/sys_wx_keyword/log/sys_wx_keyword.log
+    - name: sys_wx_keyword_nickname
+      file: /home/oicq/sys_wx_keyword_nickname/log/sys_wx_keyword.log
+    - name: sys_ieg_keyword
+      file: /home/oicq/sys_ieg_keyword/sys_ieg_keyword.log
+    - name: sys_ieg_keyword_nickname
+      file: /home/oicq/sys_ieg_keyword_nickname/sys_ieg_keyword_nickname.log
+    - name: sys_qqmail_wxctockeyword
+      file: /home/oicq/sys_qqmail_wxctockeyword/sys_qqmail_wxctockeyword.log
+    - name: sys_qqmail_wxgroupkeyword
+      file: /home/oicq/sys_qqmail_wxgroupkeyword/sys_qqmail_wxgroupkeyword.log
+    - name: sys_qqmail_real_nickname
+      file: /home/oicq/sys_qqmail_real_nickname/sys_qqmail_real_nickname.log

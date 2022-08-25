@@ -31,3 +31,15 @@ func CheckPathExists(path string) bool {
 
 	return true
 }
+
+// CheckPathUpdateTime 检查目录文件更新时间
+func CheckPathUpdateTime(path string) int64 {
+	// 读取文件信息
+	info, err := os.Stat(path)
+	// 读取错误或文件不存在，则返回 false
+	if err != nil && os.IsNotExist(err) {
+		return 0
+	}
+
+	return info.ModTime().Unix()
+}
