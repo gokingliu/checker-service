@@ -9,7 +9,7 @@ import (
 // CheckProcessExists 检查进程是否存在
 func CheckProcessExists(process string) bool {
 	// 使用命令行读取进程
-	result, err := exec.Command("/bin/sh", "-c", `ps ux | awk '/`+process+`/ && !/awk/ {print $2}'`).Output()
+	result, err := exec.Command("/bin/sh", "-c", "pgrep -f "+process).Output()
 	// 执行错误返回 false
 	if err != nil {
 		return false
