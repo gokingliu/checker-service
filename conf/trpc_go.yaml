@@ -1,6 +1,6 @@
 global:                             #全局配置
-  namespace: Development            #环境类型，分正式production和非正式development两种类型
-  env_name: test                    #环境名称，非正式环境下多环境的名称
+  namespace: Production             #环境类型，分正式production和非正式development两种类型
+  env_name: pro                    #环境名称，非正式环境下多环境的名称
 
 server:                                           #服务端配置
   app: checker                                    #业务的应用名
@@ -25,19 +25,19 @@ client:                                           #客户端调用的后端配�
   filter:                                         #针对所有后端调用函数前后的拦截器列表
   service:                                        #针对单个后端的配置
     - name: trpc.checker.stdhttp.Health1          #获取其他机器探活信息
-      namespace: Development                      #后端服务的环境
+      namespace: Production                       #后端服务的环境
       network: tcp                                #后端服务的网络类型 tcp udp 配置优先
       protocol: http                              #应用层协议 trpc http
       target: ip://127.0.0.1:8000                 #请求服务地址
       timeout: 10000                              #请求最长处理时间
     - name: trpc.checker.stdhttp.Health2          #获取其他机器探活信息
-      namespace: Development                      #后端服务的环境
+      namespace: Production                       #后端服务的环境
       network: tcp                                #后端服务的网络类型 tcp udp 配置优先
       protocol: http                              #应用层协议 trpc http
       target: ip://127.0.0.1:8000                 #请求服务地址
       timeout: 10000                              #请求最长处理时间
     - name: trpc.checker.stdhttp.Health3          #获取其他机器探活信息
-      namespace: Development                      #后端服务的环境
+      namespace: Production                       #后端服务的环境
       network: tcp                                #后端服务的网络类型 tcp udp 配置优先
       protocol: http                              #应用层协议 trpc http
       target: ip://127.0.0.1:8000                 #请求服务地址
@@ -51,7 +51,7 @@ plugins:                                          #插件配置
       - writer: file                              #本地文件日志
         level: info                               #本地文件滚动日志的级别
         writer_config:
-          filename: ../trpc.log                   #本地文件滚动日志存放的路径
+          filename: ./logs/trpc.log                   #本地文件滚动日志存放的路径
           max_size: 10                            #本地文件滚动日志的大小 单位 MB
           max_backups: 10                         #最大日志文件数
           max_age: 7                              #最大日志保留天数
