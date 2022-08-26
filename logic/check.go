@@ -37,12 +37,12 @@ func CheckLogic(key string) (bool, string, error) {
 			consumeTime := time.Now().Unix() - fileUpdateTime
 			// sys_wx_keyword 5 分钟执行一次，其他 10 分钟执行一次
 			if itemName == "sys_wx_keyword" {
-				if consumeTime > 5*60 {
+				if consumeTime > 5*60+3 {
 					flag = false
 					list = append(list, itemName)
 				}
 			} else {
-				if consumeTime > 10*60 {
+				if consumeTime > 10*60+3 {
 					flag = false
 					list = append(list, itemName)
 				}
