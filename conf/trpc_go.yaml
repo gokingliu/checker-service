@@ -1,6 +1,6 @@
-global:                             #全局配置
-  namespace: Production             #环境类型，分正式production和非正式development两种类型
-  env_name: pro                    #环境名称，非正式环境下多环境的名称
+global:                                           #全局配置
+  namespace: Production                           #环境类型，分正式production和非正式development两种类型
+  env_name: pro                                   #环境名称，非正式环境下多环境的名称
 
 server:                                           #服务端配置
   app: checker                                    #业务的应用名
@@ -13,7 +13,7 @@ server:                                           #服务端配置
     - recovery                                    #拦截框架创建的业务处理协程panic
   service:                                        #业务服务提供的service，可以有多个
     - name: trpc.checker.checkHealth.Check        #service的路由名称
-      ip: 127.0.0.1                               #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
+      ip: 0.0.0.0                                 #服务监听ip地址 可使用占位符 ${ip},ip和nic二选一，优先ip
       port: 8000                                  #服务监听端口 可使用占位符 ${port}
       network: tcp                                #网络监听类型  tcp udp
       protocol: http                              #应用层协议 trpc http
@@ -51,7 +51,7 @@ plugins:                                          #插件配置
       - writer: file                              #本地文件日志
         level: info                               #本地文件滚动日志的级别
         writer_config:
-          filename: ./logs/trpc.log                   #本地文件滚动日志存放的路径
+          filename: ./logs/trpc.log               #本地文件滚动日志存放的路径
           max_size: 10                            #本地文件滚动日志的大小 单位 MB
           max_backups: 10                         #最大日志文件数
           max_age: 7                              #最大日志保留天数
