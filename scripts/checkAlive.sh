@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 当前目录
-CURRENT_DIR=$(cd "$(dirname "$0")" || return; pwd)
+CURRENT_DIR=$(cd ../; pwd)
 cd "${CURRENT_DIR}" || return
 
 # 资源控制
@@ -33,7 +33,7 @@ sleep 1
 TOTAL_PID=$(pgrep -f "${BIN}" | wc -l)
 # 判断进程数量
 if [[ TOTAL_PID -gt 0 ]]; then
-    echo "${BIN} -conf ${CONFIG} service is bad"
-else
     echo "${BIN} -conf ${CONFIG} service is alive"
+else
+    echo "${BIN} -conf ${CONFIG} service is bad"
 fi
